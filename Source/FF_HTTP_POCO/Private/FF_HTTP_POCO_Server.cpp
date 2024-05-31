@@ -9,7 +9,7 @@ AHTTP_Server_POCO::AHTTP_Server_POCO()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-// Called when the game starts or when spawned
+// Called when the game starts or when spawned.
 void AHTTP_Server_POCO::BeginPlay()
 {
 #ifdef _WIN64
@@ -19,6 +19,7 @@ void AHTTP_Server_POCO::BeginPlay()
 	Super::BeginPlay();
 }
 
+// Called when the game end or when destroyed.
 void AHTTP_Server_POCO::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 #ifdef _WIN64
@@ -28,7 +29,7 @@ void AHTTP_Server_POCO::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
-// Called every frame
+// Called every frame.
 void AHTTP_Server_POCO::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -94,6 +95,17 @@ bool AHTTP_Server_POCO::HTTP_Server_Toggle(bool bIsPause)
 
 bool UHttpRequestPoco::SendResponse(FString In_Response)
 {
+	NameValueCollection NameValueCollection(*this->HTTP_Response);
+
+	this->HTTP_Response->setChunkedTransferEncoding(true);
+	this->HTTP_Response->setContentType("text/html"s);
+
+	this->HTTP_Response->send()
+		<< "<html>"
+		<< "<head><title>Hello</title></head>"
+		<< "<body><h1>Hello from the POCO Web Server</h1></body>"
+		<< "</html>";
+
 	return true;
 }
 

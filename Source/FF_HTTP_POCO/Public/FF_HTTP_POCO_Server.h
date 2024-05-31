@@ -17,6 +17,9 @@ class FF_HTTP_POCO_API UHttpRequestPoco : public UObject
 	
 public:
 
+	HTTPServerRequest* HTTP_Request = nullptr;
+	HTTPServerResponse* HTTP_Response = nullptr;
+
 	UFUNCTION(BlueprintCallable)
 	virtual bool SendResponse(FString In_Response = "<html>Hello World!</html>");
 

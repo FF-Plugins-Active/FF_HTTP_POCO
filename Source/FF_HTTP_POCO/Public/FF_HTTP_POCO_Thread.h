@@ -20,6 +20,7 @@ THIRD_PARTY_INCLUDES_START
 #include "Poco/Net/HTTPRequestHandlerFactory.h"
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/HTTPServerResponse.h"
+#include "Poco/Net/MessageHeader.h"
 #include "Poco/Net/ServerSocket.h"
 #include "Poco/Util/ServerApplication.h"
 
@@ -35,24 +36,6 @@ using namespace Poco::Util;
 // Fordward Declerations.
 class FRunnableThread;
 class AHTTP_Server_POCO;
-
-class HelloRequestHandler : public HTTPRequestHandler
-{
-
-public:
-
-	void handleRequest(HTTPServerRequest& request, HTTPServerResponse& response);
-
-};
-
-class HelloRequestHandlerFactory : public HTTPRequestHandlerFactory
-{
-
-public:
-
-	HTTPRequestHandler* createRequestHandler(const HTTPServerRequest&);
-
-};
 
 class FHTTP_Thread_POCO : public FRunnable
 {
@@ -95,4 +78,20 @@ private:
 
 	TSharedPtr<HTTPServer> POCO_Server;
 
+};
+
+class ReqHandler : public HTTPRequestHandler
+{
+public:
+
+	FHTTP_Thread_POCO* Owner = nullptr;
+	void handleRequest(HTTPServerRequest& request, HTTPServerResponse& response);
+};
+
+class ReqHandlerFactory : public HTTPRequestHandlerFactory
+{
+public:
+
+	FHTTP_Thread_POCO* Owner = nullptr;
+	ReqHandler* createRequestHandler(const HTTPServerRequest&);
 };
