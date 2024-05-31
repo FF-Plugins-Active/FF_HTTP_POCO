@@ -14,17 +14,11 @@ public:
 
 #ifdef _WIN64
 
-	void* PocoActiveRecord = nullptr;
+	void* PocoFoundation = nullptr;
+	void* PocoNet = nullptr;
+	void* PocoUtil = nullptr;
 	void* PocoData = nullptr;
 	void* PocoDataODBC = nullptr;
-	void* PocoEncodings = nullptr;
-	void* PocoFoundation = nullptr;
-	void* PocoJSON = nullptr;
-	void* PocoNet = nullptr;
-	void* PocoPrometheus = nullptr;
-	void* PocoUtil = nullptr;
-	void* PocoXML = nullptr;
-	void* PocoZip = nullptr;
 
 #endif
 
