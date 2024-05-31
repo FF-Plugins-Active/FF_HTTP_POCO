@@ -7,27 +7,8 @@
 
 // Threads.
 #include "FF_HTTP_POCO_Thread.h"
-
+#include "FF_HTTP_POCO_Request.h"
 #include "FF_HTTP_POCO_Server.generated.h"
-
-UCLASS(BlueprintType)
-class FF_HTTP_POCO_API UHttpRequestPoco : public UObject
-{
-	GENERATED_BODY()
-	
-public:
-
-	HTTPServerRequest* HTTP_Request = nullptr;
-	HTTPServerResponse* HTTP_Response = nullptr;
-
-	UFUNCTION(BlueprintCallable)
-	virtual bool SendResponse(FString In_Response = "<html>Hello World!</html>");
-
-	UFUNCTION(BlueprintCallable)
-	virtual bool GetRequestUri(FString& Out_Uri);
-};
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDelegateRequestPoco, UHttpRequestPoco*, Request);
 
 UCLASS()
 class FF_HTTP_POCO_API AHTTP_Server_POCO : public AActor

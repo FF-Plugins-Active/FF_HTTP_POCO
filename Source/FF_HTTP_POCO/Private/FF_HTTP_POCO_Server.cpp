@@ -92,24 +92,3 @@ bool AHTTP_Server_POCO::HTTP_Server_Toggle(bool bIsPause)
 
 	return this->Thread_POCO->Toggle(bIsPause);
 }
-
-bool UHttpRequestPoco::SendResponse(FString In_Response)
-{
-	NameValueCollection NameValueCollection(*this->HTTP_Response);
-
-	this->HTTP_Response->setChunkedTransferEncoding(true);
-	this->HTTP_Response->setContentType("text/html"s);
-
-	this->HTTP_Response->send()
-		<< "<html>"
-		<< "<head><title>Hello</title></head>"
-		<< "<body><h1>Hello from the POCO Web Server</h1></body>"
-		<< "</html>";
-
-	return true;
-}
-
-bool UHttpRequestPoco::GetRequestUri(FString& Out_Uri)
-{
-	return false;
-}
