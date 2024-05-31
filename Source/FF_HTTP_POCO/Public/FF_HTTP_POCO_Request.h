@@ -15,7 +15,6 @@ THIRD_PARTY_INCLUDES_START
 #include "Poco/Net/HTTPRequestHandlerFactory.h"
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/HTTPServerResponse.h"
-#include "Poco/Net/MessageHeader.h"
 #include "Poco/Net/ServerSocket.h"
 #include "Poco/Util/ServerApplication.h"
 

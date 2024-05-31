@@ -89,7 +89,7 @@ void FHTTP_Thread_POCO::Callback_HTTP_Start()
 
 	ReqHandlerFactory* HandlerFactory = new ReqHandlerFactory;
 	HandlerFactory->Owner = this;
-	
+
 	this->POCO_Server = MakeShared<HTTPServer>(HandlerFactory, Socket, POCO_Server_Params);
 	this->POCO_Server->start();
 }
