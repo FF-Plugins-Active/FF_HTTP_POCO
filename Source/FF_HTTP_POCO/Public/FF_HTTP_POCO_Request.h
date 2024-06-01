@@ -44,9 +44,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual bool GetRequestUri(FString& Out_Uri);
+
+	UFUNCTION(BlueprintCallable)
+	virtual bool GetRequestQuery(TMap<FString, FString>& Out_Query, FString& Query_Title);
 	
 	UFUNCTION(BlueprintCallable)
 	virtual bool GetHeaders(TMap<FString, FString>& Out_Headers);
+
+	UFUNCTION(BlueprintCallable)
+	virtual bool GetBody(FString& Out_Body);
 
 };
 

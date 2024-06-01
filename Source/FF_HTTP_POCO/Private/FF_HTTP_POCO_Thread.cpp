@@ -85,12 +85,12 @@ void FHTTP_Thread_POCO::Callback_HTTP_Start()
 	HTTPServerParams* POCO_Server_Params = new HTTPServerParams;
 	POCO_Server_Params->setMaxThreads(4);
 	
-	ServerSocket Socket(this->Port_HTTP);
-
+	ServerSocket PocoServerSocket(this->Port_HTTP);
+	
 	ReqHandlerFactory* HandlerFactory = new ReqHandlerFactory;
 	HandlerFactory->Owner = this;
 
-	this->POCO_Server = MakeShared<HTTPServer>(HandlerFactory, Socket, POCO_Server_Params);
+	this->POCO_Server = MakeShared<HTTPServer>(HandlerFactory, PocoServerSocket, POCO_Server_Params);
 	this->POCO_Server->start();
 }
 
