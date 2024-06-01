@@ -1,8 +1,5 @@
 #include "FF_HTTP_POCO_Request.h"
 
-// UE Includes
-#include "Kismet/KismetStringLibrary.h"
-
 bool UHttpRequestPoco::SendResponse(FString In_Response)
 {
 	if (!this->HTTP_Request)
@@ -22,18 +19,6 @@ bool UHttpRequestPoco::SendResponse(FString In_Response)
 	return true;
 }
 
-bool UHttpRequestPoco::GetRequestUri(FString& Out_Uri)
-{
-	if (!this->HTTP_Request)
-	{
-		return false;
-	}
-
-	Out_Uri = this->HTTP_Request->getURI().c_str();
-
-	return false;
-}
-
 bool UHttpRequestPoco::GetRequestQuery(TMap<FString, FString>& Out_Query, FString& Query_Title)
 {
 	if (!this->HTTP_Request)
@@ -41,9 +26,7 @@ bool UHttpRequestPoco::GetRequestQuery(TMap<FString, FString>& Out_Query, FStrin
 		return false;
 	}
 
-	FString RequestUri;
-	this->GetRequestUri(RequestUri);
-	TArray<FString> Sections_Uri = UKismetStringLibrary::ParseIntoArray(RequestUri, "/");
+	TArray<FString> Sections_Uri = UKismetStringLibrary::ParseIntoArray(this->RequestUri, "/");
 	
 	// We need to check if request uri is only root or not.
 	if (Sections_Uri.IsEmpty())

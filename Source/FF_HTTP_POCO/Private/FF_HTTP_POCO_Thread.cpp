@@ -6,13 +6,50 @@
 // UE Includes.
 #include "Async/Async.h"
 
+bool ReqHandler::IsApiRequest(FString InReqUri)
+{
+	TArray<FString> Sections_URI_Api = UKismetStringLibrary::ParseIntoArray(this->Owner->API_URI, "/");
+	TArray<FString> Sections_URI_Req = UKismetStringLibrary::ParseIntoArray(InReqUri, "/");
+
+	if (Sections_URI_Api.Num() > Sections_URI_Req.Num())
+	{
+		return false;
+	}
+
+	for (int32 Index_Section = 0; Index_Section < Sections_URI_Api.Num(); Index_Section++)
+	{
+		if (Sections_URI_Req[Index_Section] != Sections_URI_Api[Index_Section])
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void ReqHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& response)
 {
-	UHttpRequestPoco* RequestObject = NewObject<UHttpRequestPoco>();
-	RequestObject->HTTP_Request = &request;
-	RequestObject->HTTP_Response = &response;
-	
-	this->Owner->Parent_Actor->DelegateHttpRequest.Broadcast(RequestObject);
+	if (!this->Owner)
+	{
+		return;
+	}
+
+	FString RequestUri = request.getURI().c_str();
+
+	if (this->IsApiRequest(RequestUri))
+	{
+		UHttpRequestPoco* RequestObject = NewObject<UHttpRequestPoco>();
+		RequestObject->HTTP_Request = &request;
+		RequestObject->HTTP_Response = &response;
+		RequestObject->RequestUri = RequestUri;
+
+		this->Owner->Parent_Actor->DelegateHttpRequest.Broadcast(RequestObject);
+	}
+
+	else
+	{
+
+	}
 }
 
 ReqHandler* ReqHandlerFactory::createRequestHandler(const HTTPServerRequest&)
@@ -29,6 +66,7 @@ FHTTP_Thread_POCO::FHTTP_Thread_POCO(AHTTP_Server_POCO* In_Parent_Actor)
 	
 	this->Port_HTTP = this->Parent_Actor->Port_HTTP;
 	this->Port_HTTPS = this->Parent_Actor->Port_HTTPS;
+	this->API_URI = this->Parent_Actor->API_URI;
 
 	this->RunnableThread = FRunnableThread::Create(this, *this->Parent_Actor->Server_Name);
 }

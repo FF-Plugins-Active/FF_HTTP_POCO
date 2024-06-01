@@ -57,23 +57,19 @@ public:
 
 	AHTTP_Server_POCO* Parent_Actor = nullptr;
 
-private:
-
-	virtual void Callback_HTTP_Start();
-	virtual void Callback_HTTP_Stop();
-
-	int32 Port_HTTP = 8081;
-	int32 Port_HTTPS = 8443;
-
-	FString Server_Address_HTTPS = "";
-	FString Server_Address_HTTP = "";
 	FString Server_Path_Root = "";
 	FString API_URI = "";
 
 private:
 
+	virtual void Callback_HTTP_Start();
+	virtual void Callback_HTTP_Stop();
+
 	FRunnableThread* RunnableThread = nullptr;
 	bool bStartThread = false;
+
+	int32 Port_HTTP = 8081;
+	int32 Port_HTTPS = 8443;
 
 	TSharedPtr<HTTPServer> POCO_Server;
 
@@ -84,7 +80,9 @@ class ReqHandler : public HTTPRequestHandler
 public:
 
 	FHTTP_Thread_POCO* Owner = nullptr;
-	void handleRequest(HTTPServerRequest& request, HTTPServerResponse& response);
+	
+	virtual bool IsApiRequest(FString InReqUri);
+	virtual void handleRequest(HTTPServerRequest& request, HTTPServerResponse& response);
 };
 
 class ReqHandlerFactory : public HTTPRequestHandlerFactory
@@ -92,5 +90,5 @@ class ReqHandlerFactory : public HTTPRequestHandlerFactory
 public:
 
 	FHTTP_Thread_POCO* Owner = nullptr;
-	ReqHandler* createRequestHandler(const HTTPServerRequest&);
+	virtual ReqHandler* createRequestHandler(const HTTPServerRequest&);
 };

@@ -2,6 +2,9 @@
 
 #include "CoreMinimal.h"
 
+// UE Includes.
+#include "Kismet/KismetStringLibrary.h"
+
 THIRD_PARTY_INCLUDES_START
 
 #ifdef _WIN64
@@ -38,12 +41,12 @@ public:
 
 	HTTPServerRequest* HTTP_Request = nullptr;
 	HTTPServerResponse* HTTP_Response = nullptr;
+	
+	UPROPERTY(BlueprintReadOnly)
+	FString RequestUri;
 
 	UFUNCTION(BlueprintCallable)
 	virtual bool SendResponse(FString In_Response = "<html>Hello World!</html>");
-
-	UFUNCTION(BlueprintCallable)
-	virtual bool GetRequestUri(FString& Out_Uri);
 
 	UFUNCTION(BlueprintCallable)
 	virtual bool GetRequestQuery(TMap<FString, FString>& Out_Query, FString& Query_Title);
