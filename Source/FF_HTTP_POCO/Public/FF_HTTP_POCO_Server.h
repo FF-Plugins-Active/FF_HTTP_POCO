@@ -49,11 +49,25 @@ public:
 
 public:
 
-	UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
+	UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "It shouldn't bigger than 15 chars and it has to be unique.", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
+	FString Server_Name = "SRV_POCO_";
+
+#if (ENABLE_SERVE_STATIC_PAGE == 1)
+
+	// Delete comment lines of UPROPERTYs
+
+	//UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "Don't put \"/\" at the end.", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
 	FString Server_Path_Root = "";
 
+	//UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "It has to be either in root or one of the subfolder of root and put \"/\" as prefix.", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
+	FString Server_Path_404 = "/404.html";
+
+	//UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "Put \"/\" as prefix.", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
+	FString Server_Path_Index = "/index.html";
+#endif
+
 	UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
-	FString Server_Path_404 = "";
+	FString API_URI = "api/poco/v1";
 
 	UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
 	int32 Port_HTTP = 8081;
@@ -62,10 +76,7 @@ public:
 	int32 Port_HTTPS = 8453;
 
 	UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
-	FString API_URI = "api/poco/v1";
-
-	UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "It shouldn't bigger than 15 chars and it has to be unique.", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
-	FString Server_Name = "SRV_POCO_";
+	int32 ThreadNum = 4;
 
 public:
 

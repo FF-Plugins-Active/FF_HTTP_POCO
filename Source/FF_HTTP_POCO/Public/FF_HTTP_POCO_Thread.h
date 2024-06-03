@@ -21,16 +21,23 @@ THIRD_PARTY_INCLUDES_START
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/HTTPServerResponse.h"
 #include "Poco/Net/ServerSocket.h"
+#include "Poco/Net/SocketAddressImpl.h"
+
 #include "Poco/Util/ServerApplication.h"
+
+#include "Poco/Data/ODBC/Connector.h"
 
 #include "Windows/HideWindowsPlatformTypes.h"
 
 #endif
 THIRD_PARTY_INCLUDES_END
 
+#define ENABLE_SERVE_STATIC_PAGE 0
+
 using namespace Poco;
 using namespace Poco::Net;
 using namespace Poco::Util;
+using namespace Poco::Data::ODBC;
 
 // Fordward Declerations.
 class FRunnableThread;
@@ -57,7 +64,12 @@ public:
 
 	AHTTP_Server_POCO* Parent_Actor = nullptr;
 
+#if (ENABLE_SERVE_STATIC_PAGE == 1)
 	FString Server_Path_Root = "";
+	FString Server_Path_Index = "/index.html";
+	FString Server_Path_404 = "/404.html";
+#endif
+	
 	FString API_URI = "";
 
 private:
@@ -70,6 +82,7 @@ private:
 
 	int32 Port_HTTP = 8081;
 	int32 Port_HTTPS = 8443;
+	int32 ThreadNum = 4;
 
 	TSharedPtr<HTTPServer> POCO_Server;
 
@@ -77,12 +90,21 @@ private:
 
 class ReqHandler : public HTTPRequestHandler
 {
+
+private:
+
+	virtual bool IsApiRequest(FString InReqUri);
+
+#if (ENABLE_SERVE_STATIC_PAGE == 1)
+	virtual void ServeStaticPage(FString InReqUri, HTTPServerResponse& response);
+#endif
+
 public:
 
 	FHTTP_Thread_POCO* Owner = nullptr;
 	
-	virtual bool IsApiRequest(FString InReqUri);
 	virtual void handleRequest(HTTPServerRequest& request, HTTPServerResponse& response);
+
 };
 
 class ReqHandlerFactory : public HTTPRequestHandlerFactory

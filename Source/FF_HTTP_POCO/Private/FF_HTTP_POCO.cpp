@@ -65,6 +65,7 @@ void FFF_HTTP_POCOModule::ShutdownModule()
 	FPlatformProcess::FreeDllHandle(this->PocoDataODBC);
 	this->PocoDataODBC = nullptr;
 
+
 #endif
 }
 

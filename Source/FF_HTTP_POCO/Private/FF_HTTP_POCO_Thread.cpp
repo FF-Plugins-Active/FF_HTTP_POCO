@@ -27,6 +27,48 @@ bool ReqHandler::IsApiRequest(FString InReqUri)
 	return true;
 }
 
+#if (ENABLE_SERVE_STATIC_PAGE == 1)
+void ReqHandler::ServeStaticPage(FString InReqUri, HTTPServerResponse& response)
+{
+	FString RequestedPage;
+	FString TempRoot = this->Owner->Server_Path_Root;
+	FPaths::NormalizeFilename(TempRoot);
+
+	if (InReqUri == "/" || InReqUri == this->Owner->Server_Path_Index)
+	{
+		RequestedPage = TempRoot + this->Owner->Server_Path_Index;
+
+		FPaths::MakePlatformFilename(RequestedPage);
+		response.sendFile(TCHAR_TO_UTF8(*RequestedPage), "text/html");
+
+		return;
+	}
+
+	else
+	{
+		RequestedPage = TempRoot + InReqUri;
+
+		if (FPaths::FileExists(RequestedPage))
+		{
+			FPaths::MakePlatformFilename(RequestedPage);
+			response.sendFile(TCHAR_TO_UTF8(*RequestedPage), "text/html");
+
+			return;
+		}
+
+		else
+		{
+			RequestedPage = TempRoot + this->Owner->Server_Path_404;
+
+			FPaths::MakePlatformFilename(RequestedPage);
+			response.sendFile(TCHAR_TO_UTF8(*RequestedPage), "text/html");
+
+			return;
+		}
+	}
+}
+#endif
+
 void ReqHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& response)
 {
 	if (!this->Owner)
@@ -44,11 +86,20 @@ void ReqHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& r
 		RequestObject->RequestUri = RequestUri;
 
 		this->Owner->Parent_Actor->DelegateHttpRequest.Broadcast(RequestObject);
+
+		return;
 	}
 
 	else
 	{
+		response.setChunkedTransferEncoding(true);
+		response.setContentType("text/html");
 
+		response.send()
+			<< "<html>"
+			<< "<head><title>UE5 POCO C++ Server</title></head>"
+			<< "<body><h1>Please use correct API URL</h1></body>"
+			<< "</html>";
 	}
 }
 
@@ -66,7 +117,15 @@ FHTTP_Thread_POCO::FHTTP_Thread_POCO(AHTTP_Server_POCO* In_Parent_Actor)
 	
 	this->Port_HTTP = this->Parent_Actor->Port_HTTP;
 	this->Port_HTTPS = this->Parent_Actor->Port_HTTPS;
+	this->ThreadNum = this->Parent_Actor->ThreadNum;
+	
 	this->API_URI = this->Parent_Actor->API_URI;
+
+#if (ENABLE_SERVE_STATIC_PAGE == 1)
+	this->Server_Path_Root = this->Parent_Actor->Server_Path_Root;
+	this->Server_Path_Index = this->Parent_Actor->Server_Path_Index;
+	this->Server_Path_404 = this->Parent_Actor->Server_Path_404;
+#endif
 
 	this->RunnableThread = FRunnableThread::Create(this, *this->Parent_Actor->Server_Name);
 }
@@ -121,7 +180,7 @@ bool FHTTP_Thread_POCO::Toggle(bool bIsPause)
 void FHTTP_Thread_POCO::Callback_HTTP_Start()
 {	
 	HTTPServerParams* POCO_Server_Params = new HTTPServerParams;
-	POCO_Server_Params->setMaxThreads(4);
+	POCO_Server_Params->setMaxThreads(this->ThreadNum);
 	
 	ServerSocket PocoServerSocket(this->Port_HTTP);
 	
