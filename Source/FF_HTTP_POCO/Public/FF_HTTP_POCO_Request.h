@@ -5,6 +5,9 @@
 // UE Includes.
 #include "Kismet/KismetStringLibrary.h"
 
+// Custom Includes.
+#include "FF_HTTP_POCO_Enums.h"
+
 THIRD_PARTY_INCLUDES_START
 
 #ifdef _WIN64
@@ -37,6 +40,11 @@ class FF_HTTP_POCO_API UHttpRequestPoco : public UObject
 {
 	GENERATED_BODY()
 
+private:
+
+	virtual HTTPResponse::HTTPStatus ConvertToPocoStatus(EPocoStatusCodes In_Status);
+	virtual std::string ConvertToPocoMime(EPocoContentTypes In_ContenTypes);
+
 public:
 
 	HTTPServerRequest* HTTP_Request = nullptr;
@@ -46,7 +54,7 @@ public:
 	FString RequestUri;
 
 	UFUNCTION(BlueprintCallable)
-	virtual bool SendResponse(FString In_Response = "<html>Hello World!</html>");
+	virtual bool SendResponse_String(TMap<FString, FString> In_Headers, FString In_Response, EPocoStatusCodes In_Status = EPocoStatusCodes::OK_200, EPocoContentTypes In_ContentTypes = EPocoContentTypes::Text_Plain, bool bChunkedTransferEncoding = true);
 
 	UFUNCTION(BlueprintCallable)
 	virtual bool GetRequestQuery(TMap<FString, FString>& Out_Query, FString& Query_Title);

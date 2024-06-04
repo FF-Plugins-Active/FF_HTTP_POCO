@@ -93,12 +93,14 @@ void ReqHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& r
 	else
 	{
 		response.setChunkedTransferEncoding(true);
-		response.setContentType("text/html");
+		response.setContentType("text/html");	
+		
+		std::string ResponseString = TCHAR_TO_UTF8(*this->Owner->API_URI);
 
 		response.send()
 			<< "<html>"
 			<< "<head><title>UE5 POCO C++ Server</title></head>"
-			<< "<body><h1>Please use correct API URL</h1></body>"
+			<< "<body><h1> Please use correct API URL = " + ResponseString + "</h1></body>"
 			<< "</html>";
 	}
 }
