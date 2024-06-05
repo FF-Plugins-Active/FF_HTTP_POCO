@@ -190,97 +190,97 @@ std::string UHttpRequestPoco::ConvertToPocoMime(EPocoContentTypes In_ContenTypes
 	switch (In_ContenTypes)
 	{
 	case EPocoContentTypes::Application_7z:
-		return "";
+		return "application/x-7z-compressed";
 	
 	case EPocoContentTypes::Application_Atom:
-		return "";
+		return "application/atom+xml";
 	
 	case EPocoContentTypes::Application_Docx:
-		return "";
+		return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 	
 	case EPocoContentTypes::Application_Eot:
-		return "";
+		return "application/vnd.ms-fontobject";
 	
 	case EPocoContentTypes::Application_Excel:
-		return "";
+		return "application/vnd.ms-excel";
 	
 	case EPocoContentTypes::Application_gRPC:
-		return "";
+		return "application/grpc";
 	
 	case EPocoContentTypes::Application_gzip:
-		return "";
+		return "application/gzip";
 	
 	case EPocoContentTypes::Application_JAR:
-		return "";
+		return "application/java-archive";
 	
 	case EPocoContentTypes::Application_JS:
-		return "";
+		return "application/javascript";
 	
 	case EPocoContentTypes::Application_Json:
-		return "";
+		return "application/json";
 	
 	case EPocoContentTypes::Application_M3U8:
-		return "";
+		return "application/vnd.apple.mpegurl";
 	
 	case EPocoContentTypes::Application_Octet_Stream:
-		return "";
+		return "application/octet-stream";
 	
 	case EPocoContentTypes::Application_PDF:
-		return "";
+		return "application/pdf";
 	
 	case EPocoContentTypes::Application_PPT:
-		return "";
+		return "application/vnd.ms-powerpoint";
 	
 	case EPocoContentTypes::Application_PPTX:
-		return "";
+		return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
 	
 	case EPocoContentTypes::Application_RAR:
-		return "";
+		return "application/x-rar-compressed";
 	
 	case EPocoContentTypes::Application_RSS:
-		return "";
+		return "application/rss+xml";
 	
 	case EPocoContentTypes::Application_RTF:
-		return "";
+		return "application/rtf";
 	
 	case EPocoContentTypes::Application_URLENCODED:
-		return "";
+		return "application/x-www-form-urlencoded";
 	
 	case EPocoContentTypes::Application_WASM:
-		return "";
+		return "application/wasm";
 	
 	case EPocoContentTypes::Application_WORD:
-		return "";
+		return "application/msword";
 	
 	case EPocoContentTypes::Application_XHTML:
-		return "";
+		return "application/xhtml+xml";
 	
 	case EPocoContentTypes::Application_XLSX:
-		return "";
+		return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 	
 	case EPocoContentTypes::Application_XML:
-		return "";
+		return "application/xml";
 	
 	case EPocoContentTypes::Application_ZIP:
-		return "";
+		return "application/zip";
 	
 	case EPocoContentTypes::Audio_AAC:
-		return "";
+		return "audio/aac";
 	
 	case EPocoContentTypes::Audio_M4A:
-		return "";
+		return "audio/x-m4a";
 	
 	case EPocoContentTypes::Audio_MP3:
-		return "";
+		return "audio/mpeg";
 	
 	case EPocoContentTypes::Audio_OGG:
-		return "";
+		return "audio/ogg";
 	
 	case EPocoContentTypes::Audio_OPUS:
-		return "";
+		return "audio/opus";
 	
 	case EPocoContentTypes::Audio_PCMA:
-		return "";
+		return "audio/PCMA";
 	
 	case EPocoContentTypes::Content_Type_Application:
 		return "";
@@ -310,97 +310,97 @@ std::string UHttpRequestPoco::ConvertToPocoMime(EPocoContentTypes In_ContenTypes
 		return "";
 	
 	case EPocoContentTypes::Font_OTF:
-		return "";
+		return "font/otf";
 	
 	case EPocoContentTypes::Font_TTF:
-		return "";
+		return "font/ttf";
 	
 	case EPocoContentTypes::Font_WOFF:
-		return "";
+		return "font/woff";
 	
 	case EPocoContentTypes::Font_WOFF2:
-		return "";
+		return "font/woff2";
 	
 	case EPocoContentTypes::Image_BMP:
-		return "";
+		return "image/x-ms-bmp";
 	
 	case EPocoContentTypes::Image_GIF:
-		return "";
+		return "image/gif";
 	
 	case EPocoContentTypes::Image_ICO:
-		return "";
+		return "image/x-icon";
 	
 	case EPocoContentTypes::Image_JPG:
-		return "";
+		return "image/jpeg";
 	
 	case EPocoContentTypes::Image_PNG:
-		return "";
+		return "image/png";
 	
 	case EPocoContentTypes::Image_SVG:
-		return "";
+		return "image/svg+xml";
 	
 	case EPocoContentTypes::Image_TIFF:
-		return "";
+		return "image/tiff";
 	
 	case EPocoContentTypes::Image_WEBP:
-		return "";
+		return "image/webp";
 	
 	case EPocoContentTypes::Multiplart_Form_Data:
-		return "";
+		return "multipart/form-data";
 	
 	case EPocoContentTypes::Text_CSS:
-		return "";
+		return "text/css";
 	
 	case EPocoContentTypes::Text_CSV:
-		return "";
+		return "text/csv";
 	
 	case EPocoContentTypes::Text_Event_Stream:
-		return "";
+		return "text/event-stream";
 	
 	case EPocoContentTypes::Text_HTML:
 		return "text/html";
 	
 	case EPocoContentTypes::Text_Markdown:
-		return "";
+		return "text/markdown";
 	
 	case EPocoContentTypes::Text_Plain:
 		return "text/plain";
 	
 	case EPocoContentTypes::Video_3GPP:
-		return "";
+		return "video/3gpp";
 	
 	case EPocoContentTypes::Video_ASF:
-		return "";
+		return "video/x-ms-asf";
 	
 	case EPocoContentTypes::Video_AVI:
-		return "";
+		return "video/x-msvideo";
 	
 	case EPocoContentTypes::Video_FLV:
-		return "";
+		return "video/x-flv";
 	
 	case EPocoContentTypes::Video_M4V:
-		return "";
+		return "video/x-m4v";
 	
 	case EPocoContentTypes::Video_MNG:
-		return "";
+		return "video/x-mng";
 	
 	case EPocoContentTypes::Video_MOV:
-		return "";
+		return "video/quicktime";
 	
 	case EPocoContentTypes::Video_MP4:
-		return "";
+		return "video/mp4";
 	
 	case EPocoContentTypes::Video_MPEG:
-		return "";
+		return "video/mpeg";
 	
 	case EPocoContentTypes::Video_TS:
-		return "";
+		return "video/mp2t";
 	
 	case EPocoContentTypes::Video_WEBM:
-		return "";
+		return "video/webm";
 	
 	case EPocoContentTypes::Video_WMV:
-		return "";
+		return "video/x-ms-wmv";
 	
 	default:
 		return "text/plain";
@@ -429,6 +429,32 @@ bool UHttpRequestPoco::SendResponse_String(TMap<FString, FString> In_Headers, FS
 		<< ResponseString;
 
 	return true;
+}
+
+bool UHttpRequestPoco::SendResponse_Buffer(TMap<FString, FString> In_Headers, TArray<uint8> In_Response, EPocoStatusCodes In_Status, EPocoContentTypes In_ContentTypes, bool bChunkedTransferEncoding)
+{
+	if (!this->HTTP_Request)
+	{
+		return false;
+	}
+
+	if (In_Response.IsEmpty())
+	{
+		return false;
+	}
+
+	this->HTTP_Response->setChunkedTransferEncoding(true);
+	this->HTTP_Response->setContentType(this->ConvertToPocoMime(In_ContentTypes));
+	this->HTTP_Response->setStatus(this->ConvertToPocoStatus(In_Status));
+
+	for (TPair<FString, FString> EachHeader : In_Headers)
+	{
+		this->HTTP_Response->add(TCHAR_TO_UTF8(*EachHeader.Key), TCHAR_TO_UTF8(*EachHeader.Value));
+	}
+
+	this->HTTP_Response->sendBuffer(In_Response.GetData(), In_Response.Num());
+		
+	return false;
 }
 
 bool UHttpRequestPoco::GetRequestQuery(TMap<FString, FString>& Out_Query, FString& Query_Title)
@@ -523,7 +549,7 @@ bool UHttpRequestPoco::GetRequestQuery(TMap<FString, FString>& Out_Query, FStrin
 	return true;
 }
 
-bool UHttpRequestPoco::GetHeaders(TMap<FString, FString>& Out_Headers)
+bool UHttpRequestPoco::GetAllHeaders(TMap<FString, FString>& Out_Headers)
 {
 	if (!this->HTTP_Request)
 	{
@@ -544,6 +570,146 @@ bool UHttpRequestPoco::GetHeaders(TMap<FString, FString>& Out_Headers)
 	Out_Headers = MAP_Temp;
 	
 	return true;
+}
+
+bool UHttpRequestPoco::GetHeader(FString& Value, FString Key)
+{
+	if (!this->HTTP_Request)
+	{
+		return false;
+	}
+
+	FString TempValue = this->HTTP_Request->get(TCHAR_TO_UTF8(*Key)).c_str();
+
+	if (TempValue.IsEmpty())
+	{
+		return false;
+	}
+
+	else
+	{
+		Value = TempValue;
+		return true;
+	}
+}
+
+bool UHttpRequestPoco::GetDecodedMessageHeader(FString& Value, FString Key)
+{
+	if (!this->HTTP_Request)
+	{
+		return false;
+	}
+
+	FString TempDecoded = this->HTTP_Request->getDecoded(TCHAR_TO_UTF8(*Key)).c_str();
+
+	if (TempDecoded.IsEmpty())
+	{
+		return false;
+	}
+
+	else
+	{
+		Value = TempDecoded;
+		return true;
+	}
+}
+
+bool UHttpRequestPoco::GetMethod(FString& Out_Method)
+{
+	if (!this->HTTP_Request)
+	{
+		return false;
+	}
+
+	FString TempMethod = this->HTTP_Request->getMethod().c_str();
+
+	if (TempMethod.IsEmpty())
+	{
+		return false;
+	}
+
+	else
+	{
+		Out_Method = TempMethod;
+		return true;
+	}
+
+	return false;
+}
+
+bool UHttpRequestPoco::GetContentLenght64(int64& Out_Lenght)
+{
+	if (!this->HTTP_Request)
+	{
+		return false;
+	}
+	
+	Out_Lenght = this->HTTP_Request->getContentLength64();
+
+	return false;
+}
+
+bool UHttpRequestPoco::GetVersion(FString& Out_Version)
+{
+	if (!this->HTTP_Request)
+	{
+		return false;
+	}
+
+	FString TempVersion = this->HTTP_Request->getVersion().c_str();
+
+	if (TempVersion.IsEmpty())
+	{
+		return false;
+	}
+
+	else
+	{
+		Out_Version = TempVersion;
+		return true;
+	}
+}
+
+bool UHttpRequestPoco::GetClientAddress(FString& Out_Address)
+{
+	if (!this->HTTP_Request)
+	{
+		return false;
+	}
+
+	FString TempAddress = this->HTTP_Request->clientAddress().toString().c_str();
+
+	if (TempAddress.IsEmpty())
+	{
+		return false;
+	}
+
+	else
+	{
+		Out_Address = TempAddress;
+		return true;
+	}
+}
+
+bool UHttpRequestPoco::GetHostName(FString& Out_Host)
+{
+	if (!this->HTTP_Request)
+	{
+		return false;
+	}
+
+	FString TempHost = this->HTTP_Request->getHost().c_str();
+
+	if (TempHost.IsEmpty())
+	{
+		return false;
+	}
+
+	else
+	{
+		Out_Host = TempHost;
+		return true;
+	}
 }
 
 bool UHttpRequestPoco::GetBody(FString& Out_Body)
