@@ -129,6 +129,7 @@ HTTPResponse::HTTPStatus UHttpRequestPoco::ConvertToPocoStatus(EPocoStatusCodes 
 	
 	case EPocoStatusCodes::Locked_423:
 		return HTTPResponse::HTTPStatus::HTTP_LOCKED;
+	
 	case EPocoStatusCodes::Failed_Dependency_424:
 		return HTTPResponse::HTTPStatus::HTTP_FAILED_DEPENDENCY;
 	
