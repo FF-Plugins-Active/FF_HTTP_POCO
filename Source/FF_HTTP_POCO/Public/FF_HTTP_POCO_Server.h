@@ -49,9 +49,6 @@ public:
 
 public:
 
-	UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "It shouldn't bigger than 15 chars and it has to be unique.", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
-	FString Server_Name = "SRV_POCO_";
-
 #if (ENABLE_SERVE_STATIC_PAGE == 1)
 
 	// Delete comment lines of UPROPERTYs
@@ -68,6 +65,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
 	FString API_URI = "api/poco/v1";
+
+	UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "It shouldn't bigger than 15 chars and it has to be unique.", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
+	FString Server_Name = "SRV_POCO_";
 
 	UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
 	int32 Port_HTTP = 8081;
