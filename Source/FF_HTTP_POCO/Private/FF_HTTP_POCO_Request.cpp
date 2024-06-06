@@ -562,8 +562,8 @@ bool UHttpRequestPoco::GetAllHeaders(TMap<FString, FString>& Out_Headers)
 	TMap<FString, FString> MAP_Temp;
 	for (NameValueCollection::ConstIterator Each_Header = NVC.begin() ; Each_Header != NVC.end() ; ++Each_Header)
 	{
-		FString Key = Each_Header._Ptr->first.c_str();
-		FString Value = Each_Header._Ptr->second.c_str();
+		FString Key = UTF8_TO_TCHAR(Each_Header._Ptr->first.c_str());
+		FString Value = UTF8_TO_TCHAR(Each_Header._Ptr->second.c_str());
 
 		MAP_Temp.Add(Key, Value);
 	}
@@ -580,7 +580,7 @@ bool UHttpRequestPoco::GetHeader(FString& Value, FString Key)
 		return false;
 	}
 
-	FString TempValue = this->HTTP_Request->get(TCHAR_TO_UTF8(*Key)).c_str();
+	FString TempValue = UTF8_TO_TCHAR(this->HTTP_Request->get(TCHAR_TO_UTF8(*Key)).c_str());
 
 	if (TempValue.IsEmpty())
 	{
@@ -601,7 +601,7 @@ bool UHttpRequestPoco::GetDecodedMessageHeader(FString& Value, FString Key)
 		return false;
 	}
 
-	FString TempDecoded = this->HTTP_Request->getDecoded(TCHAR_TO_UTF8(*Key)).c_str();
+	FString TempDecoded = UTF8_TO_TCHAR(this->HTTP_Request->getDecoded(TCHAR_TO_UTF8(*Key)).c_str());
 
 	if (TempDecoded.IsEmpty())
 	{
@@ -730,7 +730,7 @@ bool UHttpRequestPoco::GetBody(FString& Out_Body)
 		return false;
 	}
 
-	Out_Body = HTTP_Content_Buffer.c_str();
+	Out_Body = UTF8_TO_TCHAR(HTTP_Content_Buffer.c_str());
 
 	return true;
 }
