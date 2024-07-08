@@ -17,6 +17,7 @@ void FFF_HTTP_POCOModule::StartupModule()
 	this->PocoUtil = FPlatformProcess::GetDllHandle(*FPaths::Combine(*DLL_Path, TEXT("PocoUtil.dll")));
 	this->PocoData = FPlatformProcess::GetDllHandle(*FPaths::Combine(*DLL_Path, TEXT("PocoData.dll")));
 	this->PocoDataODBC = FPlatformProcess::GetDllHandle(*FPaths::Combine(*DLL_Path, TEXT("PocoDataODBC.dll")));
+	this->PocoEncodings = FPlatformProcess::GetDllHandle(*FPaths::Combine(*DLL_Path, TEXT("PocoEncodings.dll")));
 
 	if (this->PocoFoundation == nullptr)
 	{
@@ -43,6 +44,11 @@ void FFF_HTTP_POCOModule::StartupModule()
 		UE_LOG(LogTemp, Fatal, TEXT("PocoDataODBC.dll failed to load for FF_HTTP_POCO plugin !"));
 	}
 
+	if (this->PocoEncodings == nullptr)
+	{
+		UE_LOG(LogTemp, Fatal, TEXT("PocoEncodings.dll failed to load for FF_HTTP_POCO plugin !"));
+	}
+
 #endif
 }
 
@@ -65,6 +71,8 @@ void FFF_HTTP_POCOModule::ShutdownModule()
 	FPlatformProcess::FreeDllHandle(this->PocoDataODBC);
 	this->PocoDataODBC = nullptr;
 
+	FPlatformProcess::FreeDllHandle(this->PocoEncodings);
+	this->PocoDataODBC = nullptr;
 
 #endif
 }

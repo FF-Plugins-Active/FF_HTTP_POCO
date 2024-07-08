@@ -19,6 +19,7 @@ public:
 	void* PocoUtil = nullptr;
 	void* PocoData = nullptr;
 	void* PocoDataODBC = nullptr;
+	void* PocoEncodings = nullptr;
 
 #endif
 
