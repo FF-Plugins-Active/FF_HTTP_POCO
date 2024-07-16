@@ -432,7 +432,7 @@ bool UHttpRequestPoco::SendResponse_String(TMap<FString, FString> In_Headers, FS
 			<< ResponseString;
 	}
 
-	catch (const std::exception& Exception)
+	catch (Poco::Exception& Exception)
 	{
 		FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->SendResponse_String : %s"), *ExceptionString);
@@ -469,7 +469,7 @@ bool UHttpRequestPoco::SendResponse_Buffer(TMap<FString, FString> In_Headers, TA
 		this->HTTP_Response->sendBuffer(In_Response.GetData(), In_Response.Num());
 	}
 
-	catch (const std::exception& Exception)
+	catch (Poco::Exception& Exception)
 	{
 		FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->SendResponse_Buffer : %s"), *ExceptionString);
@@ -594,7 +594,7 @@ bool UHttpRequestPoco::GetAllHeaders(TMap<FString, FString>& Out_Headers)
 		}
 	}
 
-	catch (const std::exception& Exception)
+	catch (Poco::Exception& Exception)
 	{
 		FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetAllHeaders : %s"), *ExceptionString);
@@ -620,7 +620,7 @@ bool UHttpRequestPoco::GetHeader(FString& Value, FString Key)
 		TempValue = UTF8_TO_TCHAR(this->HTTP_Request->get(TCHAR_TO_UTF8(*Key)).c_str());
 	}
 
-	catch (const std::exception& Exception)
+	catch (Poco::Exception& Exception)
 	{
 		FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetHeader : %s"), *ExceptionString);
@@ -651,7 +651,7 @@ bool UHttpRequestPoco::GetDecodedMessageHeader(FString& Value, FString Key)
 		TempDecoded = UTF8_TO_TCHAR(this->HTTP_Request->getDecoded(TCHAR_TO_UTF8(*Key)).c_str());
 	}
 
-	catch (const std::exception& Exception)
+	catch (Poco::Exception& Exception)
 	{
 		FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetDecodedMessageHeader : %s"), *ExceptionString);
@@ -682,7 +682,7 @@ bool UHttpRequestPoco::GetMethod(FString& Out_Method)
 		TempMethod = this->HTTP_Request->getMethod().c_str();
 	}
 
-	catch (const std::exception& Exception)
+	catch (Poco::Exception& Exception)
 	{
 		FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetMethod : %s"), *ExceptionString);
@@ -713,7 +713,7 @@ bool UHttpRequestPoco::GetContentLenght64(int64& Out_Lenght)
 		Lenght = this->HTTP_Request->getContentLength64();
 	}
 
-	catch (const std::exception& Exception)
+	catch (Poco::Exception& Exception)
 	{
 		FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetContentLenght64 : %s"), *ExceptionString);
@@ -739,7 +739,7 @@ bool UHttpRequestPoco::GetVersion(FString& Out_Version)
 		TempVersion = this->HTTP_Request->getVersion().c_str();
 	}
 
-	catch (const std::exception& Exception)
+	catch (Poco::Exception& Exception)
 	{
 		FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetVersion : %s"), *ExceptionString);
@@ -770,7 +770,7 @@ bool UHttpRequestPoco::GetClientAddress(FString& Out_Address)
 		TempAddress = this->HTTP_Request->clientAddress().toString().c_str();
 	}
 
-	catch (const std::exception& Exception)
+	catch (Poco::Exception& Exception)
 	{
 		FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetVersion : %s"), *ExceptionString);
@@ -801,7 +801,7 @@ bool UHttpRequestPoco::GetHostName(FString& Out_Host)
 		TempHost = this->HTTP_Request->getHost().c_str();
 	}
 
-	catch (const std::exception& Exception)
+	catch (Poco::Exception& Exception)
 	{
 		FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetHostName : %s"), *ExceptionString);
@@ -835,7 +835,7 @@ bool UHttpRequestPoco::GetBody(FString& Out_Body)
 		HTTP_Stream.read(HTTP_Content_Buffer.data(), HTTP_Content_Lenght);
 	}
 
-	catch (const std::exception& Exception)
+	catch (Poco::Exception& Exception)
 	{
 		FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetBody : %s"), *ExceptionString);

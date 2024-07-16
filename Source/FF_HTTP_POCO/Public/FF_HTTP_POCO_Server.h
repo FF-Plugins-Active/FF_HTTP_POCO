@@ -5,10 +5,14 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
-// Threads.
-#include "FF_HTTP_POCO_Thread.h"
+// Custom Includes.
 #include "FF_HTTP_POCO_Request.h"
+
 #include "FF_HTTP_POCO_Server.generated.h"
+
+using namespace Poco;
+using namespace Poco::Net;
+using namespace Poco::Util;
 
 UCLASS()
 class FF_HTTP_POCO_API AHTTP_Server_POCO : public AActor
@@ -23,6 +27,8 @@ protected:
 	// Called when the game end or when destroyed.
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	Poco::SharedPtr<HTTPServer> POCO_Server;
+
 public:	
 
 	// Sets default values for this actor's properties.
@@ -31,23 +37,8 @@ public:
 	// Called every frame.
 	virtual void Tick(float DeltaTime) override;
 
-#ifdef _WIN64
-	class FHTTP_Thread_POCO* Thread_POCO = nullptr;
-#endif
-
-	UFUNCTION(BlueprintImplementableEvent, meta = (Description = ""), Category = "Frozen Forest|HTTP|Server|POCO")
-	void OnHttPoco_Start();
-
-	UFUNCTION(BlueprintImplementableEvent, meta = (Description = ""), Category = "Frozen Forest|HTTP|Server|POCO")
-	void OnHttPoco_Stop();
-
-	UFUNCTION(BlueprintImplementableEvent, meta = (Description = ""), Category = "Frozen Forest|HTTP|Server|POCO")
-	void OnHttPoco_Request(UHttpRequestPoco* Request);
-
 	UPROPERTY(BlueprintAssignable, Category = "Frozen Forest|HTTP|Server|POCO")
 	FDelegateRequestPoco DelegateHttpRequest;
-
-public:
 
 	UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
 	FString API_URI = "api/poco/v1";
@@ -66,13 +57,19 @@ public:
 
 public:
 
+	UFUNCTION(BlueprintImplementableEvent, meta = (Description = ""), Category = "Frozen Forest|HTTP|Server|POCO")
+	void OnHttPoco_Start();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (Description = ""), Category = "Frozen Forest|HTTP|Server|POCO")
+	void OnHttPoco_Stop();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (Description = ""), Category = "Frozen Forest|HTTP|Server|POCO")
+	void OnHttPoco_Request(UHttpRequestPoco* Request);
+
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "HTTP Server POCO - Start"), Category = "Frozen Forest|HTTP|Server|POCO")
 	virtual bool HTTP_Server_Start();
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "HTTP Server POCO - Stop"), Category = "Frozen Forest|HTTP|Server|POCO")
 	virtual void HTTP_Server_Stop();
-
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "HTTP Server POCO - Toggle"), Category = "Frozen Forest|HTTP|Server|POCO")
-	virtual bool HTTP_Server_Toggle(bool bIsPause);
 
 };

@@ -2,36 +2,14 @@
 
 #include "CoreMinimal.h"
 
-// UE Includes.
-#include "Kismet/KismetStringLibrary.h"
-
 // Custom Includes.
 #include "FF_HTTP_POCO_Enums.h"
-
-THIRD_PARTY_INCLUDES_START
-
-#ifdef _WIN64
-#define WIN32_LEAN_AND_MEAN
-#include "Windows/AllowWindowsPlatformTypes.h"
-
-#include "winsvc.h"
-
-#include "Poco/Net/HTTPServer.h"
-#include "Poco/Net/HTTPRequestHandler.h"
-#include "Poco/Net/HTTPRequestHandlerFactory.h"
-#include "Poco/Net/HTTPServerRequest.h"
-#include "Poco/Net/HTTPServerResponse.h"
-#include "Poco/Net/ServerSocket.h"
-#include "Poco/Util/ServerApplication.h"
-
-#include "Windows/HideWindowsPlatformTypes.h"
-
-#endif
-THIRD_PARTY_INCLUDES_END
+#include "FF_HTTP_POCO_Includes.h"
 
 using namespace Poco;
 using namespace Poco::Net;
 using namespace Poco::Util;
+using namespace Poco::Data::ODBC;
 
 #include "FF_HTTP_POCO_Request.generated.h"
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kismet/KismetStringLibrary.h"
+
 THIRD_PARTY_INCLUDES_START
 
 #ifdef _WIN64
@@ -18,6 +20,7 @@ THIRD_PARTY_INCLUDES_START
 #include "Poco/Util/ServerApplication.h"
 #include "Poco/Data/ODBC/Connector.h"
 #include "Poco/SharedPtr.h"
+#include "Poco/Exception.h"
 
 #include "Windows/HideWindowsPlatformTypes.h"
 

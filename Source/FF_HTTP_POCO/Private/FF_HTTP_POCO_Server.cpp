@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "FF_HTTP_POCO_Server.h"
+#include "Classes/Request_Handler_Factory.h"
 
 // Sets default values
 AHTTP_Server_POCO::AHTTP_Server_POCO()
@@ -37,58 +38,51 @@ void AHTTP_Server_POCO::Tick(float DeltaTime)
 
 bool AHTTP_Server_POCO::HTTP_Server_Start()
 {
-#ifdef _WIN64
-	
-	if (this->Server_Name.IsEmpty())
+	HTTPServerParams* POCO_Server_Params = new HTTPServerParams;
+	POCO_Server_Params->setMaxThreads(this->ThreadNum);
+
+	Poco::ThreadPool& ThreadPool = Poco::ThreadPool::defaultPool();
+	ThreadPool.addCapacity(this->ThreadNum);
+
+	const ServerSocket PocoServerSocket(this->Port_HTTP);
+
+	ReqHandlerFactory* HandlerFactory = new ReqHandlerFactory;
+	HandlerFactory->Owner = this;
+
+	this->POCO_Server = Poco::makeShared<HTTPServer>(HandlerFactory, ThreadPool, PocoServerSocket, POCO_Server_Params);
+
+	try
 	{
+		this->POCO_Server->start();
+	}
+
+	catch (Poco::Exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Thread->Callback_HTTP_Start : %s"), *ExceptionString);
+
 		return false;
 	}
 
-	this->Thread_POCO = new FHTTP_Thread_POCO(this);
-
-	if (this->Thread_POCO)
-	{
-		return true;
-	}
-
-	else
-	{
-		return false;
-	}
-
-#else
-
-	return false;
-
-#endif
+	return true;
 }
 
 void AHTTP_Server_POCO::HTTP_Server_Stop()
 {
-#ifdef _WIN64
-	
-	if (this->Thread_POCO)
+	try
 	{
-		delete this->Thread_POCO;
+		if (!this->POCO_Server.isNull())
+		{
+			this->POCO_Server->stopAll(true);
+			this->POCO_Server.reset();
+		}
+	}
+
+	catch (Poco::Exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Thread->Callback_HTTP_Stop: %s"), *ExceptionString);
+
 		return;
 	}
-
-	else
-	{
-		return;
-	}
-
-#else
-
-#endif
-}
-
-bool AHTTP_Server_POCO::HTTP_Server_Toggle(bool bIsPause)
-{
-	if (!this->Thread_POCO)
-	{
-		return false;
-	}
-
-	return this->Thread_POCO->Toggle(bIsPause);
 }
