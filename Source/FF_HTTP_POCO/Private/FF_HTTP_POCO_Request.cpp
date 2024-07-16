@@ -410,13 +410,15 @@ std::string UHttpRequestPoco::ConvertToPocoMime(EPocoContentTypes In_ContenTypes
 
 bool UHttpRequestPoco::SendResponse_String(TMap<FString, FString> In_Headers, FString In_Response, EPocoStatusCodes In_Status, EPocoContentTypes In_ContentTypes, bool bChunkedTransferEncoding)
 {
-	if (!this->HTTP_Request)
+	if (!this->HTTP_Response)
 	{
 		return false;
 	}
 
 	try
 	{
+		poco_check_ptr(this->HTTP_Response);
+
 		this->HTTP_Response->setChunkedTransferEncoding(true);
 		this->HTTP_Response->setContentType(this->ConvertToPocoMime(In_ContentTypes));
 		this->HTTP_Response->setStatus(this->ConvertToPocoStatus(In_Status));
@@ -445,7 +447,7 @@ bool UHttpRequestPoco::SendResponse_String(TMap<FString, FString> In_Headers, FS
 
 bool UHttpRequestPoco::SendResponse_Buffer(TMap<FString, FString> In_Headers, TArray<uint8> In_Response, EPocoStatusCodes In_Status, EPocoContentTypes In_ContentTypes, bool bChunkedTransferEncoding)
 {
-	if (!this->HTTP_Request)
+	if (!this->HTTP_Response)
 	{
 		return false;
 	}
@@ -457,6 +459,8 @@ bool UHttpRequestPoco::SendResponse_Buffer(TMap<FString, FString> In_Headers, TA
 
 	try
 	{
+		poco_check_ptr(this->HTTP_Response);
+
 		this->HTTP_Response->setChunkedTransferEncoding(true);
 		this->HTTP_Response->setContentType(this->ConvertToPocoMime(In_ContentTypes));
 		this->HTTP_Response->setStatus(this->ConvertToPocoStatus(In_Status));
@@ -482,11 +486,6 @@ bool UHttpRequestPoco::SendResponse_Buffer(TMap<FString, FString> In_Headers, TA
 
 bool UHttpRequestPoco::GetRequestQuery(TMap<FString, FString>& Out_Query, FString& Query_Title)
 {
-	if (!this->HTTP_Request)
-	{
-		return false;
-	}
-
 	TArray<FString> Sections_Uri = UKismetStringLibrary::ParseIntoArray(this->RequestUri, "/");
 	
 	// We need to check if request uri is only root or not.
@@ -583,6 +582,8 @@ bool UHttpRequestPoco::GetAllHeaders(TMap<FString, FString>& Out_Headers)
 
 	try
 	{
+		poco_check_ptr(this->HTTP_Request);
+
 		NameValueCollection NVC(*this->HTTP_Request);
 
 		for (NameValueCollection::ConstIterator Each_Header = NVC.begin(); Each_Header != NVC.end(); ++Each_Header)
@@ -617,6 +618,7 @@ bool UHttpRequestPoco::GetHeader(FString& Value, FString Key)
 
 	try
 	{
+		poco_check_ptr(this->HTTP_Request);
 		TempValue = UTF8_TO_TCHAR(this->HTTP_Request->get(TCHAR_TO_UTF8(*Key)).c_str());
 	}
 
@@ -648,6 +650,7 @@ bool UHttpRequestPoco::GetDecodedMessageHeader(FString& Value, FString Key)
 
 	try
 	{
+		poco_check_ptr(this->HTTP_Request);
 		TempDecoded = UTF8_TO_TCHAR(this->HTTP_Request->getDecoded(TCHAR_TO_UTF8(*Key)).c_str());
 	}
 
@@ -679,6 +682,7 @@ bool UHttpRequestPoco::GetMethod(FString& Out_Method)
 
 	try
 	{
+		poco_check_ptr(this->HTTP_Request);
 		TempMethod = this->HTTP_Request->getMethod().c_str();
 	}
 
@@ -710,6 +714,7 @@ bool UHttpRequestPoco::GetContentLenght64(int64& Out_Lenght)
 
 	try
 	{
+		poco_check_ptr(this->HTTP_Request);
 		Lenght = this->HTTP_Request->getContentLength64();
 	}
 
@@ -736,6 +741,7 @@ bool UHttpRequestPoco::GetVersion(FString& Out_Version)
 
 	try
 	{
+		poco_check_ptr(this->HTTP_Request);
 		TempVersion = this->HTTP_Request->getVersion().c_str();
 	}
 
@@ -767,6 +773,7 @@ bool UHttpRequestPoco::GetClientAddress(FString& Out_Address)
 
 	try
 	{
+		poco_check_ptr(this->HTTP_Request);
 		TempAddress = this->HTTP_Request->clientAddress().toString().c_str();
 	}
 
@@ -798,6 +805,7 @@ bool UHttpRequestPoco::GetHostName(FString& Out_Host)
 
 	try
 	{
+		poco_check_ptr(this->HTTP_Request);
 		TempHost = this->HTTP_Request->getHost().c_str();
 	}
 
@@ -829,6 +837,8 @@ bool UHttpRequestPoco::GetBody(FString& Out_Body)
 
 	try
 	{
+		poco_check_ptr(this->HTTP_Request);
+
 		std::istream& HTTP_Stream = this->HTTP_Request->stream();
 		const size_t HTTP_Content_Lenght = this->HTTP_Request->getContentLength();
 		HTTP_Content_Buffer.reserve(HTTP_Content_Lenght);
