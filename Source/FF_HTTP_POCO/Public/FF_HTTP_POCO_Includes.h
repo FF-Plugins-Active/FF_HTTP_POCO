@@ -21,6 +21,7 @@ THIRD_PARTY_INCLUDES_START
 #include "Poco/Data/ODBC/Connector.h"
 #include "Poco/SharedPtr.h"
 #include "Poco/Exception.h"
+#include "Poco/NestedDiagnosticContext.h"
 
 #include "Windows/HideWindowsPlatformTypes.h"
 
