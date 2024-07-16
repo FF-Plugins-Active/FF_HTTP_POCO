@@ -415,19 +415,30 @@ bool UHttpRequestPoco::SendResponse_String(TMap<FString, FString> In_Headers, FS
 		return false;
 	}
 
-	this->HTTP_Response->setChunkedTransferEncoding(true);
-	this->HTTP_Response->setContentType(this->ConvertToPocoMime(In_ContentTypes));
-	this->HTTP_Response->setStatus(this->ConvertToPocoStatus(In_Status));
-
-	for (TPair<FString, FString> EachHeader : In_Headers)
+	try
 	{
-		this->HTTP_Response->add(TCHAR_TO_UTF8(*EachHeader.Key), TCHAR_TO_UTF8(*EachHeader.Value));
+		this->HTTP_Response->setChunkedTransferEncoding(true);
+		this->HTTP_Response->setContentType(this->ConvertToPocoMime(In_ContentTypes));
+		this->HTTP_Response->setStatus(this->ConvertToPocoStatus(In_Status));
+
+		for (TPair<FString, FString> EachHeader : In_Headers)
+		{
+			this->HTTP_Response->add(TCHAR_TO_UTF8(*EachHeader.Key), TCHAR_TO_UTF8(*EachHeader.Value));
+		}
+
+		std::string ResponseString = TCHAR_TO_UTF8(*In_Response);
+
+		this->HTTP_Response->send()
+			<< ResponseString;
 	}
 
-	std::string ResponseString = TCHAR_TO_UTF8(*In_Response);
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->SendResponse_String : %s"), *ExceptionString);
 
-	this->HTTP_Response->send()
-		<< ResponseString;
+		return false;
+	}
 
 	return true;
 }
@@ -444,18 +455,29 @@ bool UHttpRequestPoco::SendResponse_Buffer(TMap<FString, FString> In_Headers, TA
 		return false;
 	}
 
-	this->HTTP_Response->setChunkedTransferEncoding(true);
-	this->HTTP_Response->setContentType(this->ConvertToPocoMime(In_ContentTypes));
-	this->HTTP_Response->setStatus(this->ConvertToPocoStatus(In_Status));
-
-	for (TPair<FString, FString> EachHeader : In_Headers)
+	try
 	{
-		this->HTTP_Response->add(TCHAR_TO_UTF8(*EachHeader.Key), TCHAR_TO_UTF8(*EachHeader.Value));
+		this->HTTP_Response->setChunkedTransferEncoding(true);
+		this->HTTP_Response->setContentType(this->ConvertToPocoMime(In_ContentTypes));
+		this->HTTP_Response->setStatus(this->ConvertToPocoStatus(In_Status));
+
+		for (TPair<FString, FString> EachHeader : In_Headers)
+		{
+			this->HTTP_Response->add(TCHAR_TO_UTF8(*EachHeader.Key), TCHAR_TO_UTF8(*EachHeader.Value));
+		}
+
+		this->HTTP_Response->sendBuffer(In_Response.GetData(), In_Response.Num());
 	}
 
-	this->HTTP_Response->sendBuffer(In_Response.GetData(), In_Response.Num());
-		
-	return false;
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->SendResponse_Buffer : %s"), *ExceptionString);
+
+		return false;
+	}
+	
+	return true;
 }
 
 bool UHttpRequestPoco::GetRequestQuery(TMap<FString, FString>& Out_Query, FString& Query_Title)
@@ -557,19 +579,30 @@ bool UHttpRequestPoco::GetAllHeaders(TMap<FString, FString>& Out_Headers)
 		return false;
 	}
 
-	NameValueCollection NVC(*this->HTTP_Request);
-	
 	TMap<FString, FString> MAP_Temp;
-	for (NameValueCollection::ConstIterator Each_Header = NVC.begin() ; Each_Header != NVC.end() ; ++Each_Header)
-	{
-		FString Key = UTF8_TO_TCHAR(Each_Header._Ptr->first.c_str());
-		FString Value = UTF8_TO_TCHAR(Each_Header._Ptr->second.c_str());
 
-		MAP_Temp.Add(Key, Value);
+	try
+	{
+		NameValueCollection NVC(*this->HTTP_Request);
+
+		for (NameValueCollection::ConstIterator Each_Header = NVC.begin(); Each_Header != NVC.end(); ++Each_Header)
+		{
+			FString Key = UTF8_TO_TCHAR(Each_Header._Ptr->first.c_str());
+			FString Value = UTF8_TO_TCHAR(Each_Header._Ptr->second.c_str());
+
+			MAP_Temp.Add(Key, Value);
+		}
 	}
 
-	Out_Headers = MAP_Temp;
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetAllHeaders : %s"), *ExceptionString);
+
+		return false;
+	}
 	
+	Out_Headers = MAP_Temp;
 	return true;
 }
 
@@ -579,19 +612,29 @@ bool UHttpRequestPoco::GetHeader(FString& Value, FString Key)
 	{
 		return false;
 	}
+	
+	FString TempValue;
 
-	FString TempValue = UTF8_TO_TCHAR(this->HTTP_Request->get(TCHAR_TO_UTF8(*Key)).c_str());
-
-	if (TempValue.IsEmpty())
+	try
 	{
+		TempValue = UTF8_TO_TCHAR(this->HTTP_Request->get(TCHAR_TO_UTF8(*Key)).c_str());
+	}
+
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetHeader : %s"), *ExceptionString);
+
 		return false;
 	}
 
-	else
+	if (!TempValue.IsEmpty())
 	{
 		Value = TempValue;
 		return true;
 	}
+
+	return false;
 }
 
 bool UHttpRequestPoco::GetDecodedMessageHeader(FString& Value, FString Key)
@@ -601,18 +644,28 @@ bool UHttpRequestPoco::GetDecodedMessageHeader(FString& Value, FString Key)
 		return false;
 	}
 
-	FString TempDecoded = UTF8_TO_TCHAR(this->HTTP_Request->getDecoded(TCHAR_TO_UTF8(*Key)).c_str());
+	FString TempDecoded;
 
-	if (TempDecoded.IsEmpty())
+	try
 	{
+		TempDecoded = UTF8_TO_TCHAR(this->HTTP_Request->getDecoded(TCHAR_TO_UTF8(*Key)).c_str());
+	}
+
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetDecodedMessageHeader : %s"), *ExceptionString);
+
 		return false;
 	}
 
-	else
+	if (!TempDecoded.IsEmpty())
 	{
 		Value = TempDecoded;
 		return true;
 	}
+
+	return false;
 }
 
 bool UHttpRequestPoco::GetMethod(FString& Out_Method)
@@ -622,14 +675,22 @@ bool UHttpRequestPoco::GetMethod(FString& Out_Method)
 		return false;
 	}
 
-	FString TempMethod = this->HTTP_Request->getMethod().c_str();
+	FString TempMethod;
 
-	if (TempMethod.IsEmpty())
+	try
 	{
+		TempMethod = this->HTTP_Request->getMethod().c_str();
+	}
+
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetMethod : %s"), *ExceptionString);
+
 		return false;
 	}
 
-	else
+	if (!TempMethod.IsEmpty())
 	{
 		Out_Method = TempMethod;
 		return true;
@@ -645,9 +706,23 @@ bool UHttpRequestPoco::GetContentLenght64(int64& Out_Lenght)
 		return false;
 	}
 	
-	Out_Lenght = this->HTTP_Request->getContentLength64();
+	int64 Lenght = 0;
 
-	return false;
+	try
+	{
+		Lenght = this->HTTP_Request->getContentLength64();
+	}
+
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetContentLenght64 : %s"), *ExceptionString);
+
+		return false;
+	}
+
+	Out_Lenght = Lenght;
+	return true;
 }
 
 bool UHttpRequestPoco::GetVersion(FString& Out_Version)
@@ -657,18 +732,28 @@ bool UHttpRequestPoco::GetVersion(FString& Out_Version)
 		return false;
 	}
 
-	FString TempVersion = this->HTTP_Request->getVersion().c_str();
+	FString TempVersion;
 
-	if (TempVersion.IsEmpty())
+	try
 	{
+		TempVersion = this->HTTP_Request->getVersion().c_str();
+	}
+
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetVersion : %s"), *ExceptionString);
+
 		return false;
 	}
 
-	else
+	if (!TempVersion.IsEmpty())
 	{
 		Out_Version = TempVersion;
 		return true;
 	}
+
+	return false;
 }
 
 bool UHttpRequestPoco::GetClientAddress(FString& Out_Address)
@@ -678,18 +763,28 @@ bool UHttpRequestPoco::GetClientAddress(FString& Out_Address)
 		return false;
 	}
 
-	FString TempAddress = this->HTTP_Request->clientAddress().toString().c_str();
+	FString TempAddress;
 
-	if (TempAddress.IsEmpty())
+	try
 	{
+		TempAddress = this->HTTP_Request->clientAddress().toString().c_str();
+	}
+
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetVersion : %s"), *ExceptionString);
+
 		return false;
 	}
 
-	else
+	if (!TempAddress.IsEmpty())
 	{
 		Out_Address = TempAddress;
 		return true;
 	}
+
+	return false;
 }
 
 bool UHttpRequestPoco::GetHostName(FString& Out_Host)
@@ -698,19 +793,29 @@ bool UHttpRequestPoco::GetHostName(FString& Out_Host)
 	{
 		return false;
 	}
+	
+	FString TempHost;
 
-	FString TempHost = this->HTTP_Request->getHost().c_str();
-
-	if (TempHost.IsEmpty())
+	try
 	{
+		TempHost = this->HTTP_Request->getHost().c_str();
+	}
+
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetHostName : %s"), *ExceptionString);
+
 		return false;
 	}
 
-	else
+	if (!TempHost.IsEmpty())
 	{
 		Out_Host = TempHost;
 		return true;
 	}
+
+	return false;
 }
 
 bool UHttpRequestPoco::GetBody(FString& Out_Body)
@@ -720,17 +825,29 @@ bool UHttpRequestPoco::GetBody(FString& Out_Body)
 		return false;
 	}
 
-	std::istream& HTTP_Stream = this->HTTP_Request->stream();
-	const size_t HTTP_Content_Lenght = this->HTTP_Request->getContentLength();
-	std::string HTTP_Content_Buffer(HTTP_Content_Lenght, 0);
-	HTTP_Stream.read(HTTP_Content_Buffer.data(), HTTP_Content_Lenght);
+	std::string HTTP_Content_Buffer;
 
-	if (HTTP_Content_Buffer.empty())
+	try
 	{
+		std::istream& HTTP_Stream = this->HTTP_Request->stream();
+		const size_t HTTP_Content_Lenght = this->HTTP_Request->getContentLength();
+		HTTP_Content_Buffer.reserve(HTTP_Content_Lenght);
+		HTTP_Stream.read(HTTP_Content_Buffer.data(), HTTP_Content_Lenght);
+	}
+
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetBody : %s"), *ExceptionString);
+
 		return false;
 	}
 
-	Out_Body = UTF8_TO_TCHAR(HTTP_Content_Buffer.c_str());
+	if (!HTTP_Content_Buffer.empty())
+	{
+		Out_Body = UTF8_TO_TCHAR(HTTP_Content_Buffer.c_str());
+		return true;
+	}
 
-	return true;
+	return false;
 }

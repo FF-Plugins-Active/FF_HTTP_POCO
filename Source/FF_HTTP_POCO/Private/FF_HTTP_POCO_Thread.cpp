@@ -27,48 +27,6 @@ bool ReqHandler::IsApiRequest(FString InReqUri)
 	return true;
 }
 
-#if (ENABLE_SERVE_STATIC_PAGE == 1)
-void ReqHandler::ServeStaticPage(FString InReqUri, HTTPServerResponse& response)
-{
-	FString RequestedPage;
-	FString TempRoot = this->Owner->Server_Path_Root;
-	FPaths::NormalizeFilename(TempRoot);
-
-	if (InReqUri == "/" || InReqUri == this->Owner->Server_Path_Index)
-	{
-		RequestedPage = TempRoot + this->Owner->Server_Path_Index;
-
-		FPaths::MakePlatformFilename(RequestedPage);
-		response.sendFile(TCHAR_TO_UTF8(*RequestedPage), "text/html");
-
-		return;
-	}
-
-	else
-	{
-		RequestedPage = TempRoot + InReqUri;
-
-		if (FPaths::FileExists(RequestedPage))
-		{
-			FPaths::MakePlatformFilename(RequestedPage);
-			response.sendFile(TCHAR_TO_UTF8(*RequestedPage), "text/html");
-
-			return;
-		}
-
-		else
-		{
-			RequestedPage = TempRoot + this->Owner->Server_Path_404;
-
-			FPaths::MakePlatformFilename(RequestedPage);
-			response.sendFile(TCHAR_TO_UTF8(*RequestedPage), "text/html");
-
-			return;
-		}
-	}
-}
-#endif
-
 void ReqHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& response)
 {
 	if (!this->Owner)
@@ -76,32 +34,43 @@ void ReqHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& r
 		return;
 	}
 
-	FString RequestUri = request.getURI().c_str();
-
-	if (this->IsApiRequest(RequestUri))
+	try
 	{
-		UHttpRequestPoco* RequestObject = NewObject<UHttpRequestPoco>();
-		RequestObject->HTTP_Request = &request;
-		RequestObject->HTTP_Response = &response;
-		RequestObject->RequestUri = RequestUri;
+		FString RequestUri = request.getURI().c_str();
 
-		this->Owner->Parent_Actor->DelegateHttpRequest.Broadcast(RequestObject);
+		if (this->IsApiRequest(RequestUri))
+		{
+			UHttpRequestPoco* RequestObject = NewObject<UHttpRequestPoco>();
+			RequestObject->HTTP_Request = &request;
+			RequestObject->HTTP_Response = &response;
+			RequestObject->RequestUri = RequestUri;
 
-		return;
+			this->Owner->Parent_Actor->DelegateHttpRequest.Broadcast(RequestObject);
+
+			return;
+		}
+
+		else
+		{
+			response.setChunkedTransferEncoding(true);
+			response.setContentType("text/html");
+
+			std::string ResponseString = TCHAR_TO_UTF8(*this->Owner->API_URI);
+
+			response.send()
+				<< "<html>"
+				<< "<head><title>UE5 POCO C++ Server</title></head>"
+				<< "<body><h1> Please use correct API URL = " + ResponseString + "</h1></body>"
+				<< "</html>";
+		}
 	}
 
-	else
+	catch (const std::exception& Exception)
 	{
-		response.setChunkedTransferEncoding(true);
-		response.setContentType("text/html");	
-		
-		std::string ResponseString = TCHAR_TO_UTF8(*this->Owner->API_URI);
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Thread->handleRequest : %s"), *ExceptionString);
 
-		response.send()
-			<< "<html>"
-			<< "<head><title>UE5 POCO C++ Server</title></head>"
-			<< "<body><h1> Please use correct API URL = " + ResponseString + "</h1></body>"
-			<< "</html>";
+		return;
 	}
 }
 
@@ -120,14 +89,7 @@ FHTTP_Thread_POCO::FHTTP_Thread_POCO(AHTTP_Server_POCO* In_Parent_Actor)
 	this->Port_HTTP = this->Parent_Actor->Port_HTTP;
 	this->Port_HTTPS = this->Parent_Actor->Port_HTTPS;
 	this->ThreadNum = this->Parent_Actor->ThreadNum;
-	
 	this->API_URI = this->Parent_Actor->API_URI;
-
-#if (ENABLE_SERVE_STATIC_PAGE == 1)
-	this->Server_Path_Root = this->Parent_Actor->Server_Path_Root;
-	this->Server_Path_Index = this->Parent_Actor->Server_Path_Index;
-	this->Server_Path_404 = this->Parent_Actor->Server_Path_404;
-#endif
 
 	this->RunnableThread = FRunnableThread::Create(this, *this->Parent_Actor->Server_Name);
 }
@@ -183,20 +145,47 @@ void FHTTP_Thread_POCO::Callback_HTTP_Start()
 {	
 	HTTPServerParams* POCO_Server_Params = new HTTPServerParams;
 	POCO_Server_Params->setMaxThreads(this->ThreadNum);
+
+	Poco::ThreadPool& ThreadPool = Poco::ThreadPool::defaultPool();
+	ThreadPool.addCapacity(this->ThreadNum);
 	
-	ServerSocket PocoServerSocket(this->Port_HTTP);
+	const ServerSocket PocoServerSocket(this->Port_HTTP);
 	
 	ReqHandlerFactory* HandlerFactory = new ReqHandlerFactory;
 	HandlerFactory->Owner = this;
 
-	this->POCO_Server = MakeShared<HTTPServer>(HandlerFactory, PocoServerSocket, POCO_Server_Params);
-	this->POCO_Server->start();
+	this->POCO_Server = Poco::makeShared<HTTPServer>(HandlerFactory, ThreadPool, PocoServerSocket, POCO_Server_Params);
+
+	try
+	{
+		this->POCO_Server->start();
+	}
+
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Thread->Callback_HTTP_Start : %s"), *ExceptionString);
+
+		return;
+	}
 }
 
 void FHTTP_Thread_POCO::Callback_HTTP_Stop()
 {
-	if (this->POCO_Server.IsValid())
+	try
 	{
-		this->POCO_Server->stopAll(true);
+		if (this->POCO_Server)
+		{
+			this->POCO_Server->stopAll(true);
+			this->POCO_Server.reset();
+		}
+	}
+
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Thread->Callback_HTTP_Stop: %s"), *ExceptionString);
+
+		return;
 	}
 }

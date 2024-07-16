@@ -49,20 +49,6 @@ public:
 
 public:
 
-#if (ENABLE_SERVE_STATIC_PAGE == 1)
-
-	// Delete comment lines of UPROPERTYs
-
-	//UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "Don't put \"/\" at the end.", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
-	FString Server_Path_Root = "";
-
-	//UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "It has to be either in root or one of the subfolder of root and put \"/\" as prefix.", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
-	FString Server_Path_404 = "/404.html";
-
-	//UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "Put \"/\" as prefix.", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
-	FString Server_Path_Index = "/index.html";
-#endif
-
 	UPROPERTY(BlueprintReadOnly, meta = (ToolTip = "", ExposeOnSpawn = "true"), Category = "Frozen Forest|HTTP|Server|POCO")
 	FString API_URI = "api/poco/v1";
 
