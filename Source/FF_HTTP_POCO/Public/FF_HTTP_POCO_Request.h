@@ -20,16 +20,23 @@ class FF_HTTP_POCO_API UHttpRequestPoco : public UObject
 
 private:
 
+	HTTPServerRequest* HTTP_Request = nullptr;
+	HTTPServerResponse* HTTP_Response = nullptr;
+	FString RequestUri;
+
 	virtual HTTPResponse::HTTPStatus ConvertToPocoStatus(EPocoStatusCodes In_Status);
 	virtual std::string ConvertToPocoMime(EPocoContentTypes In_ContenTypes);
 
 public:
-
-	HTTPServerRequest* HTTP_Request = nullptr;
-	HTTPServerResponse* HTTP_Response = nullptr;
 	
-	UPROPERTY(BlueprintReadOnly)
-	FString RequestUri;
+	virtual bool SetRequest(HTTPServerRequest* In_Request);
+	virtual bool GetRequest(HTTPServerRequest*& Out_Request);
+	virtual bool SetResponse(HTTPServerResponse* In_Response);
+	virtual bool GetResponse(HTTPServerResponse*& Out_Response);
+	virtual void SetRequestUri(const FString& In_Uri);
+
+	UFUNCTION(BlueprintPure)
+	virtual FString GetRequestUri();
 
 	UFUNCTION(BlueprintCallable)
 	virtual bool SendResponse_String(TMap<FString, FString> In_Headers, FString In_Response, EPocoStatusCodes In_Status = EPocoStatusCodes::OK_200, EPocoContentTypes In_ContentTypes = EPocoContentTypes::Text_Plain, bool bChunkedTransferEncoding = true);
@@ -45,9 +52,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual bool GetHeader(FString& Value, FString Key);
-
-	UFUNCTION(BlueprintCallable)
-	virtual bool GetDecodedMessageHeader(FString& Value, FString Key);
 
 	UFUNCTION(BlueprintCallable)
 	virtual bool GetMethod(FString& Out_Method);

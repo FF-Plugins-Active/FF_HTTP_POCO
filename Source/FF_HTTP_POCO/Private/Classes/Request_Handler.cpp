@@ -30,14 +30,14 @@ void ReqHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& r
 
 	try
 	{
-		FString RequestUri = request.getURI().c_str();
+		const FString RequestUri = request.getURI().c_str();
 
 		if (this->IsApiRequest(RequestUri))
 		{
 			UHttpRequestPoco* RequestObject = NewObject<UHttpRequestPoco>();
-			RequestObject->HTTP_Request = &request;
-			RequestObject->HTTP_Response = &response;
-			RequestObject->RequestUri = RequestUri;
+			RequestObject->SetRequest(&request);
+			RequestObject->SetResponse(&response);
+			RequestObject->SetRequestUri(RequestUri);
 
 			this->Owner->DelegateHttpRequest.Broadcast(RequestObject);
 
@@ -49,7 +49,7 @@ void ReqHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& r
 			response.setChunkedTransferEncoding(true);
 			response.setContentType("text/html");
 
-			std::string ResponseString = TCHAR_TO_UTF8(*this->Owner->API_URI);
+			const std::string ResponseString = TCHAR_TO_UTF8(*this->Owner->API_URI);
 
 			response.send()
 				<< "<html>"
@@ -61,7 +61,7 @@ void ReqHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& r
 
 	catch (Poco::Exception& Exception)
 	{
-		FString ExceptionString = Exception.what();
+		const FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Thread->handleRequest : %s"), *ExceptionString);
 
 		return;

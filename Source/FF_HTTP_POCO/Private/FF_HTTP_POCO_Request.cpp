@@ -408,6 +408,104 @@ std::string UHttpRequestPoco::ConvertToPocoMime(EPocoContentTypes In_ContenTypes
 	}
 }
 
+bool UHttpRequestPoco::SetRequest(HTTPServerRequest* In_Request)
+{
+	if (!In_Request)
+	{
+		return false;
+	}
+
+	try
+	{
+		poco_check_ptr(In_Request);
+		this->HTTP_Request = In_Request;
+	}
+
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : %s"), *ExceptionString);
+	}
+
+	return true;
+}
+
+bool UHttpRequestPoco::GetRequest(HTTPServerRequest*& Out_Request)
+{
+	if (!this->HTTP_Request)
+	{
+		return false;
+	}
+
+	try
+	{
+		poco_check_ptr(this->HTTP_Request);
+		Out_Request = this->HTTP_Request;
+	}
+
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : %s"), *ExceptionString);
+	}
+
+	return true;
+}
+
+bool UHttpRequestPoco::SetResponse(HTTPServerResponse* In_Response)
+{
+	if (!In_Response)
+	{
+		return false;
+	}
+
+	try
+	{
+		poco_check_ptr(In_Response);
+		this->HTTP_Response = In_Response;
+	}
+
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : %s"), *ExceptionString);
+	}
+
+	return true;
+}
+
+bool UHttpRequestPoco::GetResponse(HTTPServerResponse*& Out_Response)
+{
+	if (!this->HTTP_Response)
+	{
+		return false;
+	}
+
+	try
+	{
+		poco_check_ptr(this->HTTP_Response);
+		Out_Response = this->HTTP_Response;
+	}
+
+	catch (const std::exception& Exception)
+	{
+		FString ExceptionString = Exception.what();
+		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : %s"), *ExceptionString);
+	}
+
+	return true;
+}
+
+void UHttpRequestPoco::SetRequestUri(const FString& In_Uri)
+{
+	this->RequestUri = In_Uri;
+}
+
+FString UHttpRequestPoco::GetRequestUri()
+{
+	return this->RequestUri;
+}
+
 bool UHttpRequestPoco::SendResponse_String(TMap<FString, FString> In_Headers, FString In_Response, EPocoStatusCodes In_Status, EPocoContentTypes In_ContentTypes, bool bChunkedTransferEncoding)
 {
 	if (!this->HTTP_Response)
@@ -436,7 +534,7 @@ bool UHttpRequestPoco::SendResponse_String(TMap<FString, FString> In_Headers, FS
 
 	catch (Poco::Exception& Exception)
 	{
-		FString ExceptionString = Exception.what();
+		const FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->SendResponse_String : %s"), *ExceptionString);
 
 		return false;
@@ -475,7 +573,7 @@ bool UHttpRequestPoco::SendResponse_Buffer(TMap<FString, FString> In_Headers, TA
 
 	catch (Poco::Exception& Exception)
 	{
-		FString ExceptionString = Exception.what();
+		const FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->SendResponse_Buffer : %s"), *ExceptionString);
 
 		return false;
@@ -494,7 +592,7 @@ bool UHttpRequestPoco::GetRequestQuery(TMap<FString, FString>& Out_Query, FStrin
 		return false;
 	}
 
-	FString LastSection = Sections_Uri.Last();
+	const FString LastSection = Sections_Uri.Last();
 
 	// Correct query contains "?" in it.
 	if (!LastSection.Contains("?"))
@@ -503,7 +601,7 @@ bool UHttpRequestPoco::GetRequestQuery(TMap<FString, FString>& Out_Query, FStrin
 	}
 
 	TArray<FString> Sections_Query = UKismetStringLibrary::ParseIntoArray(LastSection, "?");
-	int SectionSize = Sections_Query.Num();
+	const int SectionSize = Sections_Query.Num();
 
 	// If URI contains multiple param declaration or doesn't contain at all, return false. 
 	if (SectionSize == 0 || SectionSize > 2)
@@ -544,8 +642,8 @@ bool UHttpRequestPoco::GetRequestQuery(TMap<FString, FString>& Out_Query, FStrin
 				continue;
 			}
 
-			FString Key = ParamPairArray[0];
-			FString Value = ParamPairArray[1];
+			const FString Key = ParamPairArray[0];
+			const FString Value = ParamPairArray[1];
 
 			TempQueries.Add(Key, Value);
 		}
@@ -562,8 +660,8 @@ bool UHttpRequestPoco::GetRequestQuery(TMap<FString, FString>& Out_Query, FStrin
 			return false;
 		}
 
-		FString Key = ParamPairArray[0];
-		FString Value = ParamPairArray[1];
+		const FString Key = ParamPairArray[0];
+		const FString Value = ParamPairArray[1];
 
 		Out_Query.Add(Key, Value);
 	}
@@ -588,8 +686,8 @@ bool UHttpRequestPoco::GetAllHeaders(TMap<FString, FString>& Out_Headers)
 
 		for (NameValueCollection::ConstIterator Each_Header = NVC.begin(); Each_Header != NVC.end(); ++Each_Header)
 		{
-			FString Key = UTF8_TO_TCHAR(Each_Header._Ptr->first.c_str());
-			FString Value = UTF8_TO_TCHAR(Each_Header._Ptr->second.c_str());
+			const FString Key = UTF8_TO_TCHAR(Each_Header._Ptr->first.c_str());
+			const FString Value = UTF8_TO_TCHAR(Each_Header._Ptr->second.c_str());
 
 			MAP_Temp.Add(Key, Value);
 		}
@@ -597,7 +695,7 @@ bool UHttpRequestPoco::GetAllHeaders(TMap<FString, FString>& Out_Headers)
 
 	catch (Poco::Exception& Exception)
 	{
-		FString ExceptionString = Exception.what();
+		const FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetAllHeaders : %s"), *ExceptionString);
 
 		return false;
@@ -624,7 +722,7 @@ bool UHttpRequestPoco::GetHeader(FString& Value, FString Key)
 
 	catch (Poco::Exception& Exception)
 	{
-		FString ExceptionString = Exception.what();
+		const FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetHeader : %s"), *ExceptionString);
 
 		return false;
@@ -633,38 +731,6 @@ bool UHttpRequestPoco::GetHeader(FString& Value, FString Key)
 	if (!TempValue.IsEmpty())
 	{
 		Value = TempValue;
-		return true;
-	}
-
-	return false;
-}
-
-bool UHttpRequestPoco::GetDecodedMessageHeader(FString& Value, FString Key)
-{
-	if (!this->HTTP_Request)
-	{
-		return false;
-	}
-
-	FString TempDecoded;
-
-	try
-	{
-		poco_check_ptr(this->HTTP_Request);
-		TempDecoded = UTF8_TO_TCHAR(this->HTTP_Request->getDecoded(TCHAR_TO_UTF8(*Key)).c_str());
-	}
-
-	catch (Poco::Exception& Exception)
-	{
-		FString ExceptionString = Exception.what();
-		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetDecodedMessageHeader : %s"), *ExceptionString);
-
-		return false;
-	}
-
-	if (!TempDecoded.IsEmpty())
-	{
-		Value = TempDecoded;
 		return true;
 	}
 
@@ -688,7 +754,7 @@ bool UHttpRequestPoco::GetMethod(FString& Out_Method)
 
 	catch (Poco::Exception& Exception)
 	{
-		FString ExceptionString = Exception.what();
+		const FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetMethod : %s"), *ExceptionString);
 
 		return false;
@@ -720,7 +786,7 @@ bool UHttpRequestPoco::GetContentLenght64(int64& Out_Lenght)
 
 	catch (Poco::Exception& Exception)
 	{
-		FString ExceptionString = Exception.what();
+		const FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetContentLenght64 : %s"), *ExceptionString);
 
 		return false;
@@ -747,7 +813,7 @@ bool UHttpRequestPoco::GetVersion(FString& Out_Version)
 
 	catch (Poco::Exception& Exception)
 	{
-		FString ExceptionString = Exception.what();
+		const FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetVersion : %s"), *ExceptionString);
 
 		return false;
@@ -779,7 +845,7 @@ bool UHttpRequestPoco::GetClientAddress(FString& Out_Address)
 
 	catch (Poco::Exception& Exception)
 	{
-		FString ExceptionString = Exception.what();
+		const FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetVersion : %s"), *ExceptionString);
 
 		return false;
@@ -811,7 +877,7 @@ bool UHttpRequestPoco::GetHostName(FString& Out_Host)
 
 	catch (Poco::Exception& Exception)
 	{
-		FString ExceptionString = Exception.what();
+		const FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetHostName : %s"), *ExceptionString);
 
 		return false;
@@ -847,7 +913,7 @@ bool UHttpRequestPoco::GetBody(FString& Out_Body)
 
 	catch (Poco::Exception& Exception)
 	{
-		FString ExceptionString = Exception.what();
+		const FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP POCO : Request->GetBody : %s"), *ExceptionString);
 
 		return false;
