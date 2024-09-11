@@ -38,8 +38,8 @@ void AHTTP_Server_POCO::Tick(float DeltaTime)
 
 bool AHTTP_Server_POCO::HTTP_Server_Start()
 {
-	HTTPServerParams* POCO_Server_Params = new HTTPServerParams;
-	POCO_Server_Params->setMaxThreads(this->ThreadNum);
+	this->POCO_Server_Params = new HTTPServerParams;
+	this->POCO_Server_Params->setMaxThreads(this->ThreadNum);
 
 	Poco::ThreadPool& ThreadPool = Poco::ThreadPool::defaultPool();
 	ThreadPool.addCapacity(this->ThreadNum);
@@ -75,6 +75,11 @@ void AHTTP_Server_POCO::HTTP_Server_Stop()
 		{
 			this->POCO_Server->stopAll(true);
 			this->POCO_Server.reset();
+		}
+
+		if (!this->POCO_Server_Params)
+		{
+			delete(&this->POCO_Server_Params);
 		}
 	}
 

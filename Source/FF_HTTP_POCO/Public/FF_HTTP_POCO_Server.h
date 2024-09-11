@@ -19,6 +19,10 @@ class FF_HTTP_POCO_API AHTTP_Server_POCO : public AActor
 {
 	GENERATED_BODY()
 	
+private:
+
+	HTTPServerParams* POCO_Server_Params = nullptr;
+
 protected:
 
 	// Called when the game starts or when spawned.
